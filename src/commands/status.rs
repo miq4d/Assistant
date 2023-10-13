@@ -16,6 +16,7 @@ pub async fn status(_: Context<'_>) -> Result {
     Ok(())
 }
 
+/// Set the status to `Operational`
 #[poise::command(slash_command, guild_only)]
 pub async fn stabilize(ctx: Context<'_>) -> Result {
     ctx.defer().await?;
@@ -34,8 +35,9 @@ pub async fn stabilize(ctx: Context<'_>) -> Result {
     Ok(())
 }
 
+/// Set the status to error
 #[poise::command(slash_command, guild_only)]
-pub async fn error(ctx: Context<'_>, name: String) -> Result {
+pub async fn error(ctx: Context<'_>, #[description = "status name (example: Error)"] name: String) -> Result {
     ctx.defer().await?;
     let edited = STATUS_CHANNEL_ID
         .edit(&ctx, EditChannel::new().name(format!("🔴｜Status: {}", &name)))
