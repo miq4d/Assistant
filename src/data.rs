@@ -1,6 +1,6 @@
 use serenity::{prelude::GatewayIntents, client::FullEvent, gateway::ConnectionStage};
 
-use crate::events::{ready, message};
+use crate::events::{ready, message, presence};
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, SharedData, Error>;
@@ -14,6 +14,9 @@ pub fn get_intents() -> GatewayIntents {
     let mut intents = GatewayIntents::empty();
     intents.insert(GatewayIntents::GUILDS);
     intents.insert(GatewayIntents::GUILD_MESSAGES);
+    intents.insert(GatewayIntents::GUILD_MEMBERS);
+    intents.insert(GatewayIntents::GUILD_PRESENCES);
+    intents.insert(GatewayIntents::MESSAGE_CONTENT);
     intents
 }
 
@@ -38,6 +41,9 @@ pub async fn event_handler(
             data_about_bot,
         } => ready::ready(ctx, data_about_bot).await,
         FullEvent::Message { ctx, new_message } => message::message(ctx, new_message).await,
+        FullEvent::PresenceUpdate { ctx, new_data } => {
+            presence::presence(ctx, new_data).await
+        }
         _ => {}
     }
     Ok(())
