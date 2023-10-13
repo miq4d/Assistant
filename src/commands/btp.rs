@@ -23,9 +23,9 @@ pub async fn btp(ctx: Context<'_>, bits: u64) -> Result {
     // renaming SCREAMING_SNAKE_CASE to Normal Case
     let arr: Vec<_> = arr.iter().map(|s| {
         let mut s = s.clone();
-        s = s.replace("_", " ");
+        s = s.replace('_', " ");
         s = s.to_lowercase();
-        s = s.split(" ").map(|s| {
+        s = s.split(' ').map(|s| {
             let mut s = s.to_string();
             s.replace_range(0..1, &s[0..1].to_uppercase());
             s
