@@ -20,7 +20,7 @@ pub async fn presence(ctx: &Context, new_data: &Presence) {
     {
         DOWN_REPORT_CHANNEL_ID.send_message(
             ctx,
-            CreateMessage::new().content(format!("{} Bot is offline!", ADMIN_ROLE_ID.get())),
+            CreateMessage::new().content(format!("<@&{}> Bot is offline!", ADMIN_ROLE_ID.get())),
         )
         .await
         .unwrap();
