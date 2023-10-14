@@ -5,12 +5,13 @@ mod constants;
 mod structs;
 mod helper;
 
-use std::env;
+use std::{env, sync::Arc, collections::HashMap};
 use poise::{Framework, FrameworkOptions, PrefixFrameworkOptions};
 use serenity::{Client, builder::CreateAllowedMentions, all::Command};
+use tokio::sync::Mutex;
 
 use crate::{
-    data::get_intents,
+    data::{get_intents, SharedData},
     commands::{btp, purge, status, tags::{en, modify}},
     constants::PREFIX
 };
@@ -66,7 +67,9 @@ async fn main() {
                     framework.options().commands.as_slice(),
                 );
                 Command::set_global_commands(&ctx.http, cmd).await?;
-                Ok(())
+                Ok(SharedData {
+                    mentioned: Arc::new(Mutex::new(HashMap::new()))
+                })
             })
         },
     );

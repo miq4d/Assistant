@@ -1,4 +1,7 @@
-use serenity::{prelude::GatewayIntents, client::FullEvent, gateway::ConnectionStage};
+use std::{sync::Arc, collections::HashMap};
+
+use serenity::{prelude::GatewayIntents, client::FullEvent, gateway::ConnectionStage, all::UserId};
+use tokio::sync::Mutex;
 
 use crate::events::{ready, message, presence};
 
@@ -7,7 +10,10 @@ pub type Context<'a> = poise::Context<'a, SharedData, Error>;
 pub type Result = std::result::Result<(), Error>;
 pub type FrameworkContext<'a> = poise::FrameworkContext<'a, SharedData, Error>;
 
-pub type SharedData = ();
+#[derive(Debug, Clone)]
+pub struct SharedData {
+    pub mentioned: Arc<Mutex<HashMap<UserId, u64>>>
+}
 
 #[inline]
 pub fn get_intents() -> GatewayIntents {
@@ -23,7 +29,7 @@ pub fn get_intents() -> GatewayIntents {
 pub async fn event_handler(
     event: &FullEvent,
     _framework: FrameworkContext<'_>,
-    _data: &SharedData,
+    data: &SharedData,
 ) -> Result {
     match event {
         FullEvent::Resume { ctx, event: _ } => {
@@ -40,7 +46,7 @@ pub async fn event_handler(
             ctx,
             data_about_bot,
         } => ready::ready(ctx, data_about_bot).await,
-        FullEvent::Message { ctx, new_message } => message::message(ctx, new_message).await,
+        FullEvent::Message { ctx, new_message } => message::message(ctx, new_message, data).await,
         FullEvent::PresenceUpdate { ctx, new_data } => {
             presence::presence(ctx, new_data).await
         }
