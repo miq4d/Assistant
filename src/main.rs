@@ -2,14 +2,17 @@ mod data;
 mod events;
 mod commands;
 mod constants;
+mod structs;
+mod helper;
 
 use std::env;
-use poise::{Framework, FrameworkOptions};
+use poise::{Framework, FrameworkOptions, PrefixFrameworkOptions};
 use serenity::{Client, builder::CreateAllowedMentions, all::Command};
 
 use crate::{
     data::get_intents,
-    commands::{btp, purge, status},
+    commands::{btp, purge, status, tags::{en, modify}},
+    constants::PREFIX
 };
 
 #[tokio::main]
@@ -34,7 +37,9 @@ async fn main() {
     let commands = vec![
         btp::btp(),
         purge::purge(),
-        status::status()
+        status::status(),
+        en::en(),
+        modify::tag(),
     ];
 
     let frame = Framework::new(
@@ -48,6 +53,11 @@ async fn main() {
                     .replied_user(false)
                     .everyone(false)
             ),
+            prefix_options: PrefixFrameworkOptions {
+                prefix: Some(PREFIX.into()),
+                mention_as_prefix: false,
+                ..Default::default()
+            },
             ..Default::default()
         },
         |ctx, _ready, framework| {
