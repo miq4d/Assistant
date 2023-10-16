@@ -12,7 +12,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     data::{get_intents, SharedData},
-    commands::{btp, purge, status, tags::{en, modify}, runjs, translate},
+    commands::{btp, purge, status, tags::{en, modify}, runjs, translate, roles::not_reactable},
     constants::PREFIX
 };
 
@@ -43,6 +43,7 @@ async fn main() {
         modify::tag(),
         runjs::runjs(),
         translate::tja(),
+        not_reactable::not_reactable(),
     ];
 
     let frame = Framework::new(

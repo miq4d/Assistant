@@ -23,7 +23,7 @@ struct Translation {
     detected_source_language: Option<String>,
 }
 
-#[poise::command(context_menu_command = "Translate to Japanese", ephemeral)]
+#[poise::command(context_menu_command = "Translate to Japanese", ephemeral, guild_only)]
 pub async fn tja(ctx: Context<'_>, message: Message) -> Result {
     let content = message.content_safe(&ctx);
 
