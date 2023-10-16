@@ -31,6 +31,8 @@ pub async fn tja(ctx: Context<'_>, message: Message) -> Result {
         ctx.reply("This message has no text").await?;
     }
 
+    ctx.defer_ephemeral().await?;
+
     let client = reqwest::Client::new();
 
     let res = client
