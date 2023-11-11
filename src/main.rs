@@ -12,8 +12,8 @@ use tokio::sync::Mutex;
 
 use crate::{
     data::{get_intents, SharedData},
-    commands::{btp, purge, status, tags::{en, modify}, runjs, translate, roles::not_reactable, miq_status},
-    constants::PREFIX
+    commands::{btp, purge, status, tags::{en, modify}, runjs, translate, roles::not_reactable, miq_status, test},
+    constants::PREFIX,
 };
 
 #[tokio::main]
@@ -44,7 +44,8 @@ async fn main() {
         runjs::runjs(),
         translate::tja(),
         not_reactable::not_reactable(),
-        miq_status::miq_status()
+        miq_status::miq_status(),
+        test::test()
     ];
 
     let frame = Framework::new(

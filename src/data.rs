@@ -3,7 +3,7 @@ use std::{sync::Arc, collections::HashMap};
 use serenity::{prelude::GatewayIntents, client::FullEvent, gateway::ConnectionStage, all::UserId};
 use tokio::sync::Mutex;
 
-use crate::events::{ready, message, presence};
+use crate::events::{ready, message, presence, member_removal};
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, SharedData, Error>;
@@ -49,6 +49,9 @@ pub async fn event_handler(
         FullEvent::Message { ctx, new_message } => message::message(ctx, new_message, data).await,
         FullEvent::PresenceUpdate { ctx, new_data } => {
             presence::presence(ctx, new_data).await
+        }
+        FullEvent::GuildMemberRemoval { ctx, guild_id: _, user, member_data_if_available: _ } => {
+            member_removal::member_removal(ctx, user).await
         }
         _ => {}
     }
