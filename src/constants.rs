@@ -11,6 +11,8 @@ pub static DOWN_REPORT_CHANNEL_ID: Lazy<ChannelId> = Lazy::new(|| ChannelId::fro
 pub static HTQ_CHANNEL_ID: Lazy<ChannelId> = Lazy::new(|| ChannelId::from(1101830185743028224));
 pub static MOD_CHANNEL_ID: Lazy<ChannelId> = Lazy::new(|| ChannelId::from(1046639404292251718));
 pub static MEMBER_LOG_CHANNEL_ID: Lazy<ChannelId> = Lazy::new(|| ChannelId::from(1099137450758123540));
+pub static EN_FORUM_CHANNEL_ID: Lazy<ChannelId> = Lazy::new(|| ChannelId::from(1086220818423500810));
+pub static JA_FORUM_CHANNEL_ID: Lazy<ChannelId> = Lazy::new(|| ChannelId::from(1086217844108304455));
 
 pub static MAIN_BOT_ID: Lazy<UserId> = Lazy::new(|| UserId::from(949479338275913799));
 
