@@ -6,3 +6,4 @@ pub mod runjs;
 pub mod translate;
 pub mod roles;
 pub mod miq_status;
+pub mod test;
