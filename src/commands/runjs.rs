@@ -1,4 +1,4 @@
-use std::{fs, sync::Once};
+use std::sync::Once;
 
 use rusty_v8 as v8;
 use v8::inspector::{

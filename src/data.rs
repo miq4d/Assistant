@@ -1,4 +1,4 @@
-use std::{sync::Arc, collections::HashMap};
+use std:: collections::HashMap;
 
 use serenity::{prelude::GatewayIntents, client::FullEvent, gateway::ConnectionStage, all::UserId};
 use tokio::sync::Mutex;

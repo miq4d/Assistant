@@ -7,7 +7,7 @@ mod helper;
 
 use std::{env, sync::Arc, collections::HashMap};
 use poise::{Framework, FrameworkOptions, PrefixFrameworkOptions};
-use serenity::{Client, builder::CreateAllowedMentions, all::Command};
+use serenity::{Client, builder::CreateAllowedMentions};
 use tokio::sync::Mutex;
 
 use crate::{

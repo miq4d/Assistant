@@ -2,11 +2,20 @@ use std::{collections::HashMap, time::Duration};
 
 use poise::CreateReply;
 use serenity::{
-    all::{ComponentInteractionDataKind, CreateInteractionResponse, CreateInteractionResponseMessage, Member, RoleId},
-    builder::{CreateActionRow, CreateEmbed, CreateSelectMenu, CreateSelectMenuKind, CreateSelectMenuOption},
+    all::{
+        ComponentInteractionDataKind, CreateInteractionResponse, CreateInteractionResponseMessage,
+        Member, RoleId,
+    },
+    builder::{
+        CreateActionRow, CreateEmbed, CreateEmbedAuthor, CreateMessage, CreateSelectMenu,
+        CreateSelectMenuKind, CreateSelectMenuOption,
+    },
 };
 
-use crate::data::{Context, Result};
+use crate::{
+    constants::MOD_CHANNEL_ID,
+    data::{Context, Result},
+};
 
 /// Moderate user
 #[poise::command(
@@ -27,16 +36,23 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
         .collect::<HashMap<_, _>>();
 
     // refetch member
-    let member = ctx.guild_id().unwrap().member(ctx.http(), member.user.id).await?;
-    let member_roles = member.roles(ctx.cache()).unwrap_or(vec!());
+    let member = ctx
+        .guild_id()
+        .unwrap()
+        .member(ctx.http(), member.user.id)
+        .await?;
+    let member_roles = member.roles(ctx.cache()).unwrap_or(vec![]);
     let menu = CreateSelectMenu::new(
         "menu",
         CreateSelectMenuKind::String {
             options: roles
                 .iter()
-                .map(|(id, r)| CreateSelectMenuOption::new(r.name.clone(), id.get().to_string()).default_selection(member_roles.contains(r)))
+                .map(|(id, r)| {
+                    CreateSelectMenuOption::new(r.name.clone(), id.get().to_string())
+                        .default_selection(member_roles.contains(r))
+                })
                 .collect(),
-        }
+        },
     )
     .placeholder("Select roles")
     .min_values(0)
@@ -65,7 +81,10 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
         let roles = {
             let d = i.data.clone();
             if let ComponentInteractionDataKind::StringSelect { values, .. } = d.kind {
-                values.iter().map(|v| v.parse::<RoleId>().unwrap()).collect::<Vec<_>>()
+                values
+                    .iter()
+                    .map(|v| v.parse::<RoleId>().unwrap())
+                    .collect::<Vec<_>>()
             } else {
                 vec![]
             }
@@ -82,28 +101,80 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
             }
         }
 
-        for role in to_add {
+        for role in &to_add {
             log::debug!("Adding role: {}", role.name);
-            ctx.http().add_member_role(ctx.guild_id().unwrap(), member.user.id, role.id, Some(&format!("Executed by {}", ctx.author().tag()))).await?;
+            ctx.http()
+                .add_member_role(
+                    ctx.guild_id().unwrap(),
+                    member.user.id,
+                    role.id,
+                    Some(&format!("Executed by {}", ctx.author().tag())),
+                )
+                .await?;
         }
-        for role in to_remove {
+        for role in &to_remove {
             log::debug!("Removing role: {}", role.name);
-            ctx.http().remove_member_role(ctx.guild_id().unwrap(), member.user.id, role.id, Some(&format!("Executed by {}", ctx.author().tag()))).await?;
+            ctx.http()
+                .remove_member_role(
+                    ctx.guild_id().unwrap(),
+                    member.user.id,
+                    role.id,
+                    Some(&format!("Executed by {}", ctx.author().tag())),
+                )
+                .await?;
         }
 
         i.create_response(
             ctx.http(),
             CreateInteractionResponse::UpdateMessage(
-                CreateInteractionResponseMessage::new().embed(
+                CreateInteractionResponseMessage::new()
+                    .embed(
+                        CreateEmbed::new()
+                            .title("Warning role manager")
+                            .description(format!("Roles updated for {}", member.user.tag()))
+                            .color(0x00FF00),
+                    )
+                    .components(vec![]),
+            ),
+        )
+        .await?;
+
+        MOD_CHANNEL_ID
+            .send_message(
+                ctx.http(),
+                CreateMessage::new().embed(
                     CreateEmbed::new()
                         .title("Warning role manager")
                         .description(format!("Roles updated for {}", member.user.tag()))
-                        .color(0x00FF00),
-                )
-                .components(vec![]),
+                        .author(
+                            CreateEmbedAuthor::new(format!("Done by {}", ctx.author().tag()))
+                                .icon_url(ctx.author().face()),
+                        )
+                        .fields(
+                            vec![
+                                (
+                                    "Roles added",
+                                    to_add
+                                        .iter()
+                                        .map(|r| r.name.clone())
+                                        .collect::<Vec<_>>()
+                                        .join("\n"),
+                                    true,
+                                ),
+                                (
+                                    "Roles removed",
+                                    to_remove
+                                        .iter()
+                                        .map(|r| r.name.clone())
+                                        .collect::<Vec<_>>()
+                                        .join("\n"),
+                                    true,
+                                )
+                            ]
+                        ),
+                ),
             )
-        )
-        .await?;
+            .await?;
     }
 
     Ok(())
