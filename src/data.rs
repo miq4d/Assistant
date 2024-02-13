@@ -10,9 +10,9 @@ pub type Context<'a> = poise::Context<'a, SharedData, Error>;
 pub type Result = std::result::Result<(), Error>;
 pub type FrameworkContext<'a> = poise::FrameworkContext<'a, SharedData, Error>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SharedData {
-    pub mentioned: Arc<Mutex<HashMap<UserId, u64>>>
+    pub mentioned: Mutex<HashMap<UserId, u64>>
 }
 
 #[inline]
@@ -27,15 +27,16 @@ pub fn get_intents() -> GatewayIntents {
 }
 
 pub async fn event_handler(
+    framework: FrameworkContext<'_>,
     event: &FullEvent,
-    _framework: FrameworkContext<'_>,
-    data: &SharedData,
 ) -> Result {
+    let data = framework.user_data();
+    let ctx = framework.serenity_context;
     match event {
-        FullEvent::Resume { ctx, event: _ } => {
+        FullEvent::Resume { event: _ } => {
             log::info!("Shard: {} has resumed.", ctx.shard_id);
         },
-        FullEvent::ShardStageUpdate { ctx, event } => {
+        FullEvent::ShardStageUpdate { event } => {
             if event.new.is_connecting() {
                 log::info!("Shard: {} is connecting.", ctx.shard_id);
             } else if event.new == ConnectionStage::Disconnected {
@@ -43,14 +44,13 @@ pub async fn event_handler(
             }
         }
         FullEvent::Ready {
-            ctx,
             data_about_bot,
-        } => ready::ready(ctx, data_about_bot).await,
-        FullEvent::Message { ctx, new_message } => message::message(ctx, new_message, data).await,
-        FullEvent::PresenceUpdate { ctx, new_data } => {
+        } => ready::ready(ctx, data_about_bot, &framework).await,
+        FullEvent::Message { new_message } => message::message(ctx, new_message, &data).await,
+        FullEvent::PresenceUpdate { new_data } => {
             presence::presence(ctx, new_data).await
         }
-        FullEvent::GuildMemberRemoval { ctx, guild_id: _, user, member_data_if_available: _ } => {
+        FullEvent::GuildMemberRemoval { guild_id: _, user, member_data_if_available: _ } => {
             member_removal::member_removal(ctx, user).await
         }
         _ => {}

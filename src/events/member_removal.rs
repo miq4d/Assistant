@@ -32,8 +32,8 @@ pub async fn member_removal(ctx: &Context, user: &User) {
         })
         .filter(|c| {
             !c.flags.contains(ChannelFlags::PINNED)
-                && !c.thread_metadata.unwrap().locked
-                && !c.thread_metadata.unwrap().archived
+                && !c.thread_metadata.unwrap().locked()
+                && !c.thread_metadata.unwrap().archived()
         })
         .collect::<Vec<_>>();
 

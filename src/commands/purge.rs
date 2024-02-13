@@ -26,7 +26,7 @@ pub async fn purge(
 
     let messages = ctx
         .channel_id()
-        .messages(&ctx, GetMessages::new().limit(amount.try_into().unwrap_or(100)))
+        .messages(ctx.http(), GetMessages::new().limit(amount.try_into().unwrap_or(100)))
         .await?;
 
     let messages = messages
@@ -41,7 +41,7 @@ pub async fn purge(
         .map(|m| m.id)
         .collect::<Vec<_>>();
 
-    ctx.channel_id().delete_messages(&ctx, &messages).await?;
+    ctx.channel_id().delete_messages(ctx.http(), &messages).await?;
 
     ctx.send(CreateReply::new().embed(
         CreateEmbed::new()

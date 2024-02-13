@@ -17,6 +17,6 @@ pub static JA_FORUM_CHANNEL_ID: Lazy<ChannelId> = Lazy::new(|| ChannelId::from(1
 pub static MAIN_BOT_ID: Lazy<UserId> = Lazy::new(|| UserId::from(949479338275913799));
 
 pub static ADMIN_ROLE_ID: Lazy<RoleId> = Lazy::new(|| RoleId::from(954552825902411795));
-pub static NOT_REACTABLE_ROLE_ID: Lazy<RoleId> = Lazy::new(|| RoleId::from(1163413580629155900));
+//pub static NOT_REACTABLE_ROLE_ID: Lazy<RoleId> = Lazy::new(|| RoleId::from(1163413580629155900));
 
 pub static GUILD_ID: Lazy<GuildId> = Lazy::new(|| GuildId::from(954552825902411786));

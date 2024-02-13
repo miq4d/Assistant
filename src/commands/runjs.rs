@@ -1,4 +1,4 @@
-use std::sync::Once;
+use std::{fs, sync::Once};
 
 use rusty_v8 as v8;
 use v8::inspector::{
@@ -49,6 +49,8 @@ pub async fn runjs(ctx: Context<'_>, #[rest] code: String) -> Result {
     });
 
     let mut final_data: Vec<String> = Vec::new();
+
+    //let polyfill = include_str!("./consoleLog.js");
 
     {
         let isolate = &mut v8::Isolate::new(v8::CreateParams::default());

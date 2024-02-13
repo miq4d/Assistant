@@ -25,7 +25,7 @@ struct Translation {
 
 #[poise::command(context_menu_command = "Translate to Japanese", ephemeral, guild_only)]
 pub async fn tja(ctx: Context<'_>, message: Message) -> Result {
-    let content = message.content_safe(&ctx);
+    let content = message.content_safe(ctx.cache());
 
     if content.is_empty() {
         ctx.reply("This message has no text").await?;

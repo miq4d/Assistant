@@ -12,7 +12,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     data::{get_intents, SharedData},
-    commands::{btp, purge, status, tags::{en, modify}, runjs, translate, roles::not_reactable, miq_status, test},
+    commands::{btp, purge, status, tags::{en, modify}, runjs, translate, miq_status, test, manage},
     constants::PREFIX,
 };
 
@@ -43,16 +43,16 @@ async fn main() {
         modify::tag(),
         runjs::runjs(),
         translate::tja(),
-        not_reactable::not_reactable(),
         miq_status::miq_status(),
-        test::test()
+        test::test(),
+        manage::manage()
     ];
 
     let frame = Framework::new(
         FrameworkOptions {
             commands,
-            event_handler: |event, framework, user_data| {
-                Box::pin(data::event_handler(event, framework, user_data))
+            event_handler: |framework, event| {
+                Box::pin(data::event_handler(framework, event))
             },
             allowed_mentions: Some(
                 CreateAllowedMentions::new()
@@ -65,22 +65,23 @@ async fn main() {
                 ..Default::default()
             },
             ..Default::default()
-        },
+        }/*,
         |ctx, _ready, framework| {
             Box::pin(async move {
                 let cmd = poise::builtins::create_application_commands(
                     framework.options().commands.as_slice(),
                 );
                 Command::set_global_commands(&ctx.http, cmd).await?;
-                Ok(SharedData {
-                    mentioned: Arc::new(Mutex::new(HashMap::new()))
-                })
+                Ok()
             })
-        },
+        },*/
     );
 
-    let mut client = Client::builder(token, intents)
+    let mut client = Client::builder(&token, intents)
         .framework(frame)
+        .data(Arc::new(SharedData {
+            mentioned: Mutex::new(HashMap::new())
+        }))
         .await
         .unwrap();
 
