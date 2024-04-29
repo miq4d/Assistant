@@ -7,3 +7,5 @@ pub mod translate;
 pub mod miq_status;
 pub mod test;
 pub mod manage;
+pub mod modping;
+pub mod adminping;
