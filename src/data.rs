@@ -47,7 +47,7 @@ pub async fn event_handler(
             data_about_bot,
         } => ready::ready(ctx, data_about_bot, &framework).await,
         FullEvent::Message { new_message } => message::message(ctx, new_message, &data).await,
-        FullEvent::PresenceUpdate { new_data } => {
+        FullEvent::PresenceUpdate { old_data: _, new_data } => {
             presence::presence(ctx, new_data).await
         }
         FullEvent::GuildMemberRemoval { guild_id: _, user, member_data_if_available: _ } => {

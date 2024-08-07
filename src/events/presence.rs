@@ -1,5 +1,5 @@
 use serenity::{
-    all::{OnlineStatus, Presence},
+    all::{CacheHttp, OnlineStatus, Presence},
     builder::CreateMessage,
     prelude::Context,
 };
@@ -19,7 +19,7 @@ pub async fn presence(ctx: &Context, new_data: &Presence) {
         && statuses.web.unwrap_or(OnlineStatus::Offline) == OnlineStatus::Offline
     {
         DOWN_REPORT_CHANNEL_ID.send_message(
-            ctx,
+            ctx.http(),
             CreateMessage::new().content(format!("<@&{}> Bot is offline!", ADMIN_ROLE_ID.get())),
         )
         .await

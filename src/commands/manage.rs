@@ -27,6 +27,7 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
     let roles = ctx.guild_id().unwrap().roles(ctx.http()).await?;
     let roles = roles
         .iter()
+        .map(|r| (r.id, r))
         .filter(|r| r.1.name.starts_with("🚨"))
         .collect::<HashMap<_, _>>();
     let roles_id = roles

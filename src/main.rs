@@ -12,7 +12,7 @@ use tokio::sync::Mutex;
 
 use crate::{
     data::{get_intents, SharedData},
-    commands::{btp, purge, status, tags::{en, modify}, runjs, translate, miq_status, test, manage, modping, adminping},
+    commands::{btp, purge, status, tags::{en, modify}, runjs, translate, shard, test, manage, modping, adminping},
     constants::PREFIX,
 };
 
@@ -43,7 +43,7 @@ async fn main() {
         modify::tag(),
         runjs::runjs(),
         translate::tja(),
-        miq_status::miq_status(),
+        shard::shard(),
         test::test(),
         manage::manage(),
         modping::modping(),

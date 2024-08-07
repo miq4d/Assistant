@@ -21,3 +21,4 @@ pub static MOD_ROLE_ID: Lazy<RoleId> = Lazy::new(|| RoleId::from(104837546905097
 //pub static NOT_REACTABLE_ROLE_ID: Lazy<RoleId> = Lazy::new(|| RoleId::from(1163413580629155900));
 
 pub static GUILD_ID: Lazy<GuildId> = Lazy::new(|| GuildId::from(954552825902411786));
+pub static TOTAL_SHARDS: u64 = 400;
