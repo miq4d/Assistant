@@ -1,3 +1,4 @@
+#![cfg(feature = "runjs")]
 use std::sync::Once;
 
 use rusty_v8 as v8;
