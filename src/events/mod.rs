@@ -1,4 +1,4 @@
-pub mod ready;
+pub mod member_removal;
 pub mod message;
 pub mod presence;
-pub mod member_removal;
+pub mod ready;

@@ -18,11 +18,13 @@ pub async fn presence(ctx: &Context, new_data: &Presence) {
         && statuses.mobile.unwrap_or(OnlineStatus::Offline) == OnlineStatus::Offline
         && statuses.web.unwrap_or(OnlineStatus::Offline) == OnlineStatus::Offline
     {
-        DOWN_REPORT_CHANNEL_ID.send_message(
-            ctx.http(),
-            CreateMessage::new().content(format!("<@&{}> Bot is offline!", ADMIN_ROLE_ID.get())),
-        )
-        .await
-        .unwrap();
+        DOWN_REPORT_CHANNEL_ID
+            .send_message(
+                ctx.http(),
+                CreateMessage::new()
+                    .content(format!("<@&{}> Bot is offline!", ADMIN_ROLE_ID.get())),
+            )
+            .await
+            .unwrap();
     }
 }

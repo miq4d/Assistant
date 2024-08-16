@@ -151,28 +151,26 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
                             CreateEmbedAuthor::new(format!("Done by {}", ctx.author().tag()))
                                 .icon_url(ctx.author().face()),
                         )
-                        .fields(
-                            vec![
-                                (
-                                    "Roles added",
-                                    to_add
-                                        .iter()
-                                        .map(|r| r.name.clone())
-                                        .collect::<Vec<_>>()
-                                        .join("\n"),
-                                    true,
-                                ),
-                                (
-                                    "Roles removed",
-                                    to_remove
-                                        .iter()
-                                        .map(|r| r.name.clone())
-                                        .collect::<Vec<_>>()
-                                        .join("\n"),
-                                    true,
-                                )
-                            ]
-                        ),
+                        .fields(vec![
+                            (
+                                "Roles added",
+                                to_add
+                                    .iter()
+                                    .map(|r| r.name.clone())
+                                    .collect::<Vec<_>>()
+                                    .join("\n"),
+                                true,
+                            ),
+                            (
+                                "Roles removed",
+                                to_remove
+                                    .iter()
+                                    .map(|r| r.name.clone())
+                                    .collect::<Vec<_>>()
+                                    .join("\n"),
+                                true,
+                            ),
+                        ]),
                 ),
             )
             .await?;

@@ -9,7 +9,10 @@ use crate::constants::{EN_FORUM_CHANNEL_ID, GUILD_ID, JA_FORUM_CHANNEL_ID, MEMBE
 pub async fn member_removal(ctx: &Context, user: &User) {
     log::info!("{} has left the server.", user.name);
     MEMBER_LOG_CHANNEL_ID
-        .say(&ctx.http, format!("{} (<@{}>) has left.", user.name, user.id.get()))
+        .say(
+            &ctx.http,
+            format!("{} (<@{}>) has left.", user.name, user.id.get()),
+        )
         .await
         .expect("Failed to send message to member log channel.");
 

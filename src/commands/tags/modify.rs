@@ -38,7 +38,14 @@ pub async fn create(
         OptionChoices::en => "en",
     };
     let key = key.to_lowercase();
-    add_tag(Tag { key, value: value.replace("\\n", "\n") }, lang).await;
+    add_tag(
+        Tag {
+            key,
+            value: value.replace("\\n", "\n"),
+        },
+        lang,
+    )
+    .await;
     ctx.say("Tag created").await?;
     Ok(())
 }

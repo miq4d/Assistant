@@ -1,7 +1,7 @@
-use std::sync::Arc;
 use std::fs::read_to_string;
 use std::fs::File;
 use std::io::Write;
+use std::sync::Arc;
 
 use once_cell::sync::Lazy;
 use tokio::sync::RwLock;
@@ -55,7 +55,8 @@ pub async fn add_tag(tag: Tag, lang: &str) {
     let mut vec = en_tags.clone();
     vec.push(tag.clone());
     let mut file = File::create("tags/en.json").unwrap();
-    file.write_all(serde_json::to_string(&vec).unwrap().as_bytes()).unwrap();
+    file.write_all(serde_json::to_string(&vec).unwrap().as_bytes())
+        .unwrap();
     drop(en_tags);
     refresh_tags(lang).await;
 }
@@ -77,7 +78,8 @@ pub async fn remove_tag(key: String, lang: &str) -> Result<(), String> {
     }
     vec.retain(|t| t.key != key);
     let mut file = File::create("tags/en.json").unwrap();
-    file.write_all(serde_json::to_string(&vec).unwrap().as_bytes()).unwrap();
+    file.write_all(serde_json::to_string(&vec).unwrap().as_bytes())
+        .unwrap();
     drop(en_tags);
     refresh_tags(lang).await;
     Ok(())

@@ -1,9 +1,9 @@
 use std::env;
 
+use serde::{Deserialize, Serialize};
 use serenity::all::Message;
-use serde::{Serialize, Deserialize};
 
-use crate::data::{Result, Context};
+use crate::data::{Context, Result};
 
 #[derive(Serialize, Debug)]
 struct DeepLRequest {
@@ -37,7 +37,13 @@ pub async fn tja(ctx: Context<'_>, message: Message) -> Result {
 
     let res = client
         .post("https://api-free.deepl.com/v2/translate")
-        .header("Authorization", format!("DeepL-Auth-Key {}", env::var("DEEPL_KEY").expect("Set DeepL Key!")))
+        .header(
+            "Authorization",
+            format!(
+                "DeepL-Auth-Key {}",
+                env::var("DEEPL_KEY").expect("Set DeepL Key!")
+            ),
+        )
         .json(&DeepLRequest {
             text: vec![content.to_string()],
             target_lang: "JA".to_string(),
@@ -48,6 +54,6 @@ pub async fn tja(ctx: Context<'_>, message: Message) -> Result {
         .await?;
 
     ctx.reply(&res.translations[0].text).await?;
-    
+
     Ok(())
 }
