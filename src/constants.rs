@@ -2,7 +2,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use serenity::all::{ChannelId, GuildId, RoleId, UserId};
 
-pub static PREFIX: &'static str = ".";
+pub static PREFIX: &str = ".";
 
 pub static MENTION_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(format!(r"<@!?{}>", MAIN_BOT_ID.get()).as_str()).unwrap());

@@ -22,7 +22,7 @@ pub async fn stabilize(ctx: Context<'_>) -> Result {
     ctx.defer().await?;
     let edited = STATUS_CHANNEL_ID
         .edit(
-            &ctx.http(),
+            ctx.http(),
             EditChannel::new().name("🟢｜Status: Operational"),
         )
         .await;
@@ -47,7 +47,7 @@ pub async fn error(
     ctx.defer().await?;
     let edited = STATUS_CHANNEL_ID
         .edit(
-            &ctx.http(),
+            ctx.http(),
             EditChannel::new().name(format!("🔴｜Status: {}", &name)),
         )
         .await;

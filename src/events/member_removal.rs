@@ -24,13 +24,8 @@ pub async fn member_removal(ctx: &Context, user: &User) {
     let forum_threads = threads
         .iter()
         .filter(|c| {
-            c.parent_id
-                .and_then(|f| {
-                    Some(
-                        f.get() == EN_FORUM_CHANNEL_ID.get()
-                            || f.get() == JA_FORUM_CHANNEL_ID.get(),
-                    )
-                })
+            c.parent_id.map(|f| f.get() == EN_FORUM_CHANNEL_ID.get()
+                            || f.get() == JA_FORUM_CHANNEL_ID.get())
                 .unwrap_or(false)
         })
         .filter(|c| {

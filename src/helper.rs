@@ -38,7 +38,7 @@ pub async fn get_tags(lang: &str) -> Vec<Tag> {
     let data = tags.clone();
     if data.is_empty() {
         drop(tags);
-        let data = refresh_tags(&lang).await;
+        let data = refresh_tags(lang).await;
         return data;
     }
     data.clone()

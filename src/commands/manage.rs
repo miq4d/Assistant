@@ -95,10 +95,8 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
         for role in roles_id {
             if roles.contains(&role.1.id) {
                 to_add.push(role.1);
-            } else {
-                if member_roles.contains(&role.1) {
-                    to_remove.push(role.1);
-                }
+            } else if member_roles.contains(role.1) {
+                to_remove.push(role.1);
             }
         }
 
