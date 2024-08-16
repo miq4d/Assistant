@@ -26,6 +26,7 @@ enum StatusType {
     User = 1,
 }
 
+/// Show status of a guild or user
 #[poise::command(slash_command, owners_only)]
 pub async fn status(
     ctx: Context<'_>,
