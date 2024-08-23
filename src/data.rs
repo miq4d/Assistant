@@ -5,7 +5,7 @@ use serenity::{all::UserId, client::FullEvent, gateway::ConnectionStage, prelude
 use sqlx::{Pool, Postgres};
 use tokio::sync::Mutex;
 
-use crate::events::{member_removal, message, presence, ready};
+use crate::events::{member_removal, message, presence, reaction_add, ready};
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, SharedData, Error>;
@@ -28,6 +28,7 @@ pub fn get_intents() -> GatewayIntents {
     intents.insert(GatewayIntents::GUILD_MESSAGES);
     intents.insert(GatewayIntents::GUILD_MEMBERS);
     intents.insert(GatewayIntents::GUILD_PRESENCES);
+    intents.insert(GatewayIntents::GUILD_MESSAGE_REACTIONS);
     intents.insert(GatewayIntents::MESSAGE_CONTENT);
     intents
 }
@@ -57,6 +58,9 @@ pub async fn event_handler(framework: FrameworkContext<'_>, event: &FullEvent) -
             user,
             member_data_if_available: _,
         } => member_removal::member_removal(ctx, user).await,
+        FullEvent::ReactionAdd { add_reaction } => {
+            reaction_add::reaction_add(ctx, add_reaction).await
+        }
         _ => {}
     }
     Ok(())
