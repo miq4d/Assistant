@@ -28,5 +28,5 @@ pub static NOT_REACTABLE_ROLE_ID: Lazy<RoleId> = Lazy::new(|| RoleId::from(11634
 pub static GUILD_ID: Lazy<GuildId> = Lazy::new(|| GuildId::from(954552825902411786));
 pub static TOTAL_SHARDS: u64 = 400;
 
-pub static BANNED_REACTIONS: Lazy<Vec<&str>> = Lazy::new(|| vec!["🖕"]);
-pub static FORBIDDEN_REACTIONS: Lazy<Vec<&str>> = Lazy::new(|| vec!["🔞", "🤮", "🤰", "🫃", "🫄"]);
+pub static BANNED_REACTIONS: Lazy<Vec<&str>> = Lazy::new(|| vec!["🖕", "🖕🏻", "🖕🏼", "🖕🏽", "🖕🏾", "🖕🏿"]);
+pub static FORBIDDEN_REACTIONS: Lazy<Vec<&str>> = Lazy::new(|| vec!["🔞", "🤮", "🤰", "🫃", "🫄", "🫃🏻", "🫃🏼", "🫃🏽", "🫃🏾", "🫃🏿", "🫄🏻", "🫄🏼", "🫄🏽", "🫄🏾", "🫄🏿", "🤰🏻", "🤰🏼", "🤰🏽", "🤰🏾", "🤰🏿"]);
