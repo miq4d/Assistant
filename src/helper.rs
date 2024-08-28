@@ -4,6 +4,7 @@ use std::io::Write;
 use std::sync::Arc;
 
 use once_cell::sync::Lazy;
+use regex::Regex;
 use tokio::sync::RwLock;
 
 use crate::structs::tags::Tag;
@@ -83,4 +84,12 @@ pub async fn remove_tag(key: String, lang: &str) -> Result<(), String> {
     drop(en_tags);
     refresh_tags(lang).await;
     Ok(())
+}
+
+static SKIN_MODIFIER_REGEX: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r"[\u{1F3FB}-\u{1F3FF}]").unwrap());
+
+pub fn remove_skin_tone(s: &str) -> String {
+    // Remove skin tone modifier
+    return SKIN_MODIFIER_REGEX.replace_all(s, "").to_string();
 }
