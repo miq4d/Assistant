@@ -126,6 +126,13 @@ pub static ALLOWED_REACTIONS: Lazy<Vec<&str>> = Lazy::new(|| {
         "💝",
         "❤️‍🔥",
         "💯",
+        "🔟",
+        "✅",
+        "✔️",
+        "☑️",
+        "🆗",
+        "🆒",
+        "🆕"
     ]
 });
 pub static ALLOWED_REACTION_IDS: Lazy<Vec<EmojiId>> = Lazy::new(|| {
