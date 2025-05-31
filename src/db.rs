@@ -1,5 +1,3 @@
-#![cfg(feature = "db")]
-
 use std::env;
 
 use chrono::NaiveDateTime;

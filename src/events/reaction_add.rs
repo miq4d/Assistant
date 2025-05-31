@@ -15,13 +15,13 @@ pub async fn reaction_add(ctx: &Context, add_reaction: &Reaction) {
         return;
     }
 
-    if !ANNOUNCE_CHANNEL_IDS.contains(&add_reaction.channel_id) {
+    if !ANNOUNCE_CHANNEL_IDS.contains(&add_reaction.channel_id.expect_channel()) {
         return;
     }
 
     for reaction in BANNED_REACTIONS.iter() {
         if let ReactionType::Unicode(s) = &add_reaction.emoji {
-            if remove_skin_tone(s).to_string() == reaction.to_string() {
+            if remove_skin_tone(s) == *reaction {
                 add_reaction.delete(ctx.http()).await.unwrap();
                 add_reaction
                     .member
@@ -38,6 +38,7 @@ pub async fn reaction_add(ctx: &Context, add_reaction: &Reaction) {
                     .await
                     .unwrap();
                 MOD_CHANNEL_ID
+                    .widen()
                     .send_message(
                         ctx.http(),
                         CreateMessage::default().embeds(vec![CreateEmbed::default().description(
@@ -64,7 +65,7 @@ pub async fn reaction_add(ctx: &Context, add_reaction: &Reaction) {
     for reaction in ALLOWED_REACTIONS.iter() {
         match &add_reaction.emoji {
             ReactionType::Unicode(s) => {
-                if remove_skin_tone(s) == reaction.to_string() {
+                if remove_skin_tone(s) == *reaction {
                     return;
                 }
             }

@@ -1,5 +1,3 @@
-#![cfg(feature = "admin")]
-
 use poise::{ChoiceParameter, CreateReply};
 use serenity::all::CreateAttachment;
 use sqlx::types::Json;

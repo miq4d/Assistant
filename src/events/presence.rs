@@ -19,6 +19,7 @@ pub async fn presence(ctx: &Context, new_data: &Presence) {
         && statuses.web.unwrap_or(OnlineStatus::Offline) == OnlineStatus::Offline
     {
         DOWN_REPORT_CHANNEL_ID
+            .widen()
             .send_message(
                 ctx.http(),
                 CreateMessage::new()

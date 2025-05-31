@@ -12,17 +12,19 @@ use crate::{
     data::SharedData,
 };
 
-pub async fn message(ctx: &Context, message: &Message, data: &SharedData) {
+pub async fn message(ctx: &Context, message: &Message) {
     let channel = message.channel(&ctx).await.unwrap().guild().unwrap();
 
     // Auto-Publish Announce
-    if channel.kind == ChannelType::News && !message.author.bot() {
+    if channel.base.kind == ChannelType::News && !message.author.bot() {
         message.crosspost(&ctx.http).await.unwrap();
     }
 
     if message.author.bot() {
         return;
     }
+
+    let data = ctx.data::<SharedData>();
 
     // Mentioned
     if MENTION_REGEX.is_match(&message.content) && message.referenced_message.is_none() {

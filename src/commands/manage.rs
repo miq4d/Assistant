@@ -10,6 +10,7 @@ use serenity::{
         CreateActionRow, CreateEmbed, CreateEmbedAuthor, CreateMessage, CreateSelectMenu,
         CreateSelectMenuKind, CreateSelectMenuOption,
     },
+    collector::CollectComponentInteractions,
 };
 
 use crate::{
@@ -73,10 +74,10 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
 
     let m = reply.into_message().await?;
 
-    let interaction = m
-        .await_component_interaction(ctx.serenity_context().shard.clone())
-        .timeout(Duration::from_secs(300))
-        .await;
+    let interaction =
+        m.id.collect_component_interactions(ctx.serenity_context())
+            .timeout(Duration::from_secs(300))
+            .await;
 
     if let Some(i) = interaction {
         let roles = {
@@ -139,6 +140,7 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
         .await?;
 
         MOD_CHANNEL_ID
+            .widen()
             .send_message(
                 ctx.http(),
                 CreateMessage::new().embed(

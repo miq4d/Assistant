@@ -91,5 +91,5 @@ static SKIN_MODIFIER_REGEX: Lazy<Regex> =
 
 pub fn remove_skin_tone(s: &str) -> String {
     // Remove skin tone modifier
-    return SKIN_MODIFIER_REGEX.replace_all(s, "").to_string();
+    SKIN_MODIFIER_REGEX.replace_all(s, "").to_string()
 }

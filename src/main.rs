@@ -10,8 +10,8 @@ mod structs;
 #[cfg(feature = "db")]
 use db::create_pool;
 use poise::{Framework, FrameworkOptions, PrefixFrameworkOptions};
-use serenity::{builder::CreateAllowedMentions, Client};
-use std::{collections::HashMap, env, sync::Arc};
+use serenity::{all::Token, builder::CreateAllowedMentions, Client};
+use std::{collections::HashMap, sync::Arc};
 use tokio::sync::Mutex;
 
 use crate::{
@@ -21,7 +21,7 @@ use crate::{
         test, translate,
     },
     constants::PREFIX,
-    data::{get_intents, SharedData},
+    data::{get_intents, Handler, SharedData},
 };
 
 #[cfg(feature = "admin")]
@@ -44,7 +44,8 @@ async fn main() {
 
     log::info!("Starting...");
 
-    let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
+    let token = Token::from_env("DISCORD_TOKEN").expect("Expected a token in the environment");
+
     let intents = get_intents();
 
     let commands = vec![
@@ -67,7 +68,6 @@ async fn main() {
 
     let frame = Framework::new(FrameworkOptions {
         commands,
-        event_handler: |framework, event| Box::pin(data::event_handler(framework, event)),
         allowed_mentions: Some(
             CreateAllowedMentions::new()
                 .replied_user(false)
@@ -81,8 +81,9 @@ async fn main() {
         ..Default::default()
     });
 
-    let mut client = Client::builder(&token, intents)
+    let mut client = Client::builder(token, intents)
         .framework(frame)
+        .event_handler(Handler)
         .data(Arc::new(SharedData {
             mentioned: Mutex::new(HashMap::new()),
             #[cfg(feature = "db")]
