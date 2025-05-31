@@ -41,7 +41,7 @@ pub static REACTION_LIMIT_BYPASS_ROLE_IDS: Lazy<Vec<RoleId>> = Lazy::new(|| {
 });
 
 pub static GUILD_ID: Lazy<GuildId> = Lazy::new(|| GuildId::from(954552825902411786));
-pub static TOTAL_SHARDS: u64 = 500;
+pub static TOTAL_SHARDS: u64 = 560;
 
 pub static BANNED_REACTIONS: Lazy<Vec<&str>> = Lazy::new(|| vec!["🖕"]);
 pub static ALLOWED_REACTIONS: Lazy<Vec<&str>> = Lazy::new(|| {
