@@ -13,11 +13,13 @@ use crate::{
 };
 
 pub async fn message(ctx: &Context, message: &Message) {
-    let channel = message.channel(&ctx).await.unwrap().guild().unwrap();
+    let channel = message.channel(&ctx).await.unwrap();
 
-    // Auto-Publish Announce
-    if channel.base.kind == ChannelType::News && !message.author.bot() {
-        message.crosspost(&ctx.http).await.unwrap();
+    if let Some(guild) = channel.guild() {
+        // Auto-Publish Announce
+        if guild.base.kind == ChannelType::News && !message.author.bot() {
+            message.crosspost(&ctx.http).await.unwrap();
+        }
     }
 
     if message.author.bot() {
