@@ -10,9 +10,10 @@ mod structs;
 #[cfg(feature = "db")]
 use db::create_pool;
 use poise::{Framework, FrameworkOptions, PrefixFrameworkOptions};
-use serenity::{all::Token, builder::CreateAllowedMentions, Client};
-use std::{collections::HashMap, sync::Arc};
+use serenity::{Client, all::Token, builder::CreateAllowedMentions};
+use std::{collections::HashMap, env, sync::Arc};
 use tokio::sync::Mutex;
+use tracing_subscriber::EnvFilter;
 
 use crate::{
     commands::{
@@ -21,7 +22,7 @@ use crate::{
         test, translate,
     },
     constants::PREFIX,
-    data::{get_intents, Handler, SharedData},
+    data::{Handler, SharedData, get_intents},
 };
 
 #[cfg(feature = "admin")]
@@ -32,17 +33,27 @@ use crate::commands::runjs;
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
-    env_logger::builder()
-        .filter_module("assistant", {
-            if cfg!(debug_assertions) {
-                log::LevelFilter::Trace
-            } else {
-                log::LevelFilter::Info
-            }
-        })
-        .init();
+    let default_filter = if cfg!(debug_assertions) {
+        "assistant=trace"
+    } else {
+        "assistant=info"
+    };
+    let env_filter =
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(default_filter));
+    let log_format = env::var("LOG_FORMAT").unwrap_or_default();
+    let subscriber = tracing_subscriber::fmt().with_env_filter(env_filter);
+    if log_format.eq_ignore_ascii_case("json") {
+        subscriber
+            .json()
+            .flatten_event(true)
+            .with_current_span(false)
+            .with_span_list(false)
+            .init();
+    } else {
+        subscriber.init();
+    }
 
-    log::info!("Starting...");
+    tracing::info!("Starting...");
 
     let token = Token::from_env("DISCORD_TOKEN").expect("Expected a token in the environment");
 
@@ -75,6 +86,9 @@ async fn main() {
         ),
         prefix_options: PrefixFrameworkOptions {
             prefix: Some(PREFIX.into()),
+            // Forum post bodies are dispatched as thread creation messages.
+            // Keep prefix tag commands available there.
+            ignore_thread_creation: false,
             mention_as_prefix: false,
             ..Default::default()
         },
@@ -82,8 +96,8 @@ async fn main() {
     });
 
     let mut client = Client::builder(token, intents)
-        .framework(frame)
-        .event_handler(Handler)
+        .framework(Box::new(frame))
+        .event_handler(Arc::new(Handler))
         .data(Arc::new(SharedData {
             mentioned: Mutex::new(HashMap::new()),
             #[cfg(feature = "db")]

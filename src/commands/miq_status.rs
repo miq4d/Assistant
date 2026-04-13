@@ -1,14 +1,17 @@
-use std::{collections::HashMap, env};
+use std::{collections::HashMap, env, sync::LazyLock};
 
 use poise::CreateReply;
-use serenity::{builder::CreateEmbed, model::Color};
 use regex::Regex;
-use once_cell::sync::Lazy;
+use serenity::{builder::CreateEmbed, model::Color};
 
 use crate::data::{Context, Result};
 
-static CPU_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"Current CPU Usage</div><div.*?>(\d\d?\.?\d?\d?)%").unwrap());
-static RAM_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r#"(?s)Current RAM Usage</div>.*?<div.*?("|')>\s?\((\d\d?\.?\d?\d?)%\)"#).unwrap());
+static CPU_REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"Current CPU Usage</div><div.*?>(\d\d?\.?\d?\d?)%").unwrap());
+static RAM_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r#"(?s)Current RAM Usage</div>.*?<div.*?("|')>\s?\((\d\d?\.?\d?\d?)%\)"#)
+        .unwrap()
+});
 
 /// Get the status of the MiQ VPS
 #[poise::command(slash_command, guild_only, rename = "miq-status", global_cooldown = 20)]

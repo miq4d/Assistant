@@ -3,11 +3,11 @@ use serenity::all::CreateAllowedMentions;
 
 use crate::{
     constants::ADMIN_ROLE_ID,
-    data::{Context, Result},
+    data::{Context, RemainingArgs, Result},
 };
 
 #[poise::command(prefix_command, guild_only, global_cooldown = 300)]
-pub async fn adminping(ctx: Context<'_>, #[rest] _comments: Option<String>) -> Result {
+pub async fn adminping(ctx: Context<'_>, _comments: Option<RemainingArgs>) -> Result {
     ctx.send(
         CreateReply::new()
             .allowed_mentions(CreateAllowedMentions::new().all_roles(true))

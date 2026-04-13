@@ -30,7 +30,7 @@ pub async fn message(ctx: &Context, message: &Message) {
 
     // Mentioned
     if MENTION_REGEX.is_match(&message.content) && message.referenced_message.is_none() {
-        log::debug!("Mentioned");
+        tracing::debug!("Mentioned");
         let mut mentioned = data.mentioned.lock().await;
         let time = mentioned.get(&message.author.id);
         if let Some(time) = time {

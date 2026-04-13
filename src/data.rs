@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 
 use serenity::{
-    all::{EventHandler, FullEvent, UserId},
+    all::{ConnectionStage, EventHandler, FullEvent, UserId},
     async_trait,
-    gateway::ConnectionStage,
     prelude::GatewayIntents,
 };
 #[cfg(feature = "db")]
@@ -18,6 +17,40 @@ pub type Context<'a> = poise::Context<'a, SharedData, Error>;
 pub type Result = std::result::Result<(), Error>;
 #[cfg(feature = "db")]
 pub type MiqPool = Pool<Postgres>;
+
+pub struct RemainingArgs;
+
+#[derive(Debug, Default)]
+struct MissingRemainingArgs;
+
+impl std::fmt::Display for MissingRemainingArgs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("missing remaining arguments")
+    }
+}
+
+impl std::error::Error for MissingRemainingArgs {}
+
+#[async_trait]
+impl<'a> poise::PopArgument<'a> for RemainingArgs {
+    async fn pop_from(
+        args: &'a str,
+        attachment_index: usize,
+        _ctx: &SerenityContext,
+        _msg: &serenity::all::Message,
+    ) -> std::result::Result<
+        (&'a str, usize, Self),
+        (Box<dyn std::error::Error + Send + Sync>, Option<String>),
+    > {
+        let args = args.trim_start();
+        if args.is_empty() {
+            return Err((MissingRemainingArgs.into(), None));
+        }
+
+        let _ = args;
+        Ok(("", attachment_index, Self))
+    }
+}
 
 #[derive(Debug)]
 pub struct SharedData {
@@ -45,13 +78,13 @@ impl EventHandler for Handler {
     async fn dispatch(&self, ctx: &SerenityContext, event: &FullEvent) {
         match event {
             FullEvent::Resume { event: _, .. } => {
-                log::info!("Shard: {} has resumed.", ctx.shard_id);
+                tracing::info!("Shard: {} has resumed.", ctx.shard_id);
             }
             FullEvent::ShardStageUpdate { event, .. } => {
                 if event.new.is_connecting() {
-                    log::info!("Shard: {} is connecting.", ctx.shard_id);
+                    tracing::info!("Shard: {} is connecting.", ctx.shard_id);
                 } else if event.new == ConnectionStage::Disconnected {
-                    log::info!("Shard: {} has disconnected.", ctx.shard_id);
+                    tracing::info!("Shard: {} has disconnected.", ctx.shard_id);
                 }
             }
             FullEvent::Ready { data_about_bot, .. } => ready::ready(data_about_bot).await,

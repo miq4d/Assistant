@@ -1,15 +1,15 @@
-use std::fs::read_to_string;
 use std::fs::File;
+use std::fs::read_to_string;
 use std::io::Write;
-use std::sync::Arc;
+use std::sync::{Arc, LazyLock};
 
-use once_cell::sync::Lazy;
 use regex::Regex;
 use tokio::sync::RwLock;
 
 use crate::structs::tags::Tag;
 
-static EN_TAGS: Lazy<Arc<RwLock<Vec<Tag>>>> = Lazy::new(|| Arc::new(RwLock::new(Vec::new())));
+static EN_TAGS: LazyLock<Arc<RwLock<Vec<Tag>>>> =
+    LazyLock::new(|| Arc::new(RwLock::new(Vec::new())));
 
 pub async fn refresh_tags(lang: &str) -> Vec<Tag> {
     let tags = {
@@ -86,8 +86,8 @@ pub async fn remove_tag(key: String, lang: &str) -> Result<(), String> {
     Ok(())
 }
 
-static SKIN_MODIFIER_REGEX: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"[\u{1F3FB}-\u{1F3FF}]").unwrap());
+static SKIN_MODIFIER_REGEX: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"[\u{1F3FB}-\u{1F3FF}]").unwrap());
 
 pub fn remove_skin_tone(s: &str) -> String {
     // Remove skin tone modifier

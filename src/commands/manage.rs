@@ -7,8 +7,8 @@ use serenity::{
         Member, RoleId,
     },
     builder::{
-        CreateActionRow, CreateEmbed, CreateEmbedAuthor, CreateMessage, CreateSelectMenu,
-        CreateSelectMenuKind, CreateSelectMenuOption,
+        CreateActionRow, CreateComponent, CreateEmbed, CreateEmbedAuthor, CreateMessage,
+        CreateSelectMenu, CreateSelectMenuKind, CreateSelectMenuOption,
     },
     collector::CollectComponentInteractions,
 };
@@ -62,7 +62,7 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
 
     let reply = ctx.send(
         CreateReply::new()
-            .components(vec![CreateActionRow::SelectMenu(menu)])
+            .components(vec![CreateComponent::ActionRow(CreateActionRow::SelectMenu(menu))])
             .embed(
                 CreateEmbed::new()
                     .title("Warning role manager")
@@ -102,7 +102,7 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
         }
 
         for role in &to_add {
-            log::debug!("Adding role: {}", role.name);
+            tracing::debug!("Adding role: {}", role.name);
             ctx.http()
                 .add_member_role(
                     ctx.guild_id().unwrap(),
@@ -113,7 +113,7 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
                 .await?;
         }
         for role in &to_remove {
-            log::debug!("Removing role: {}", role.name);
+            tracing::debug!("Removing role: {}", role.name);
             ctx.http()
                 .remove_member_role(
                     ctx.guild_id().unwrap(),
@@ -134,7 +134,7 @@ pub async fn manage(ctx: Context<'_>, #[description = "Target"] member: Member) 
                             .description(format!("Roles updated for {}", member.user.tag()))
                             .color(0x00FF00),
                     )
-                    .components(vec![]),
+                    .components(Vec::<CreateComponent<'_>>::new()),
             ),
         )
         .await?;

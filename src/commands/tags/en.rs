@@ -1,10 +1,10 @@
 use crate::{
-    data::{Context, Result},
+    data::{Context, RemainingArgs, Result},
     helper::get_tags,
 };
 
 #[poise::command(prefix_command, guild_only, user_cooldown = 2)]
-pub async fn en(ctx: Context<'_>, tag_name: String, #[rest] _comments: Option<String>) -> Result {
+pub async fn en(ctx: Context<'_>, tag_name: String, _comments: Option<RemainingArgs>) -> Result {
     let tag_name = tag_name.to_lowercase();
     let tag = get_tags("en")
         .await

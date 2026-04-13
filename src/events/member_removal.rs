@@ -3,7 +3,7 @@ use serenity::{all::User, builder::EditThread, prelude::Context};
 use crate::constants::{EN_FORUM_CHANNEL_ID, GUILD_ID, JA_FORUM_CHANNEL_ID, MEMBER_LOG_CHANNEL_ID};
 
 pub async fn member_removal(ctx: &Context, user: &User) {
-    log::info!("{} has left the server.", user.name);
+    tracing::info!("{} has left the server.", user.name);
     MEMBER_LOG_CHANNEL_ID
         .widen()
         .say(
