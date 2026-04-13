@@ -10,6 +10,7 @@ mod structs;
 #[cfg(feature = "db")]
 use db::create_pool;
 use poise::{Framework, FrameworkOptions, PrefixFrameworkOptions};
+use rustls::crypto::aws_lc_rs;
 use serenity::{Client, all::Token, builder::CreateAllowedMentions};
 use std::{collections::HashMap, env, sync::Arc};
 use tokio::sync::Mutex;
@@ -52,6 +53,10 @@ async fn main() {
     } else {
         subscriber.init();
     }
+
+    aws_lc_rs::default_provider()
+        .install_default()
+        .expect("failed to install rustls crypto provider");
 
     tracing::info!("Starting...");
 

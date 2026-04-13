@@ -74,6 +74,7 @@ dependencies = [
  "poise",
  "regex",
  "reqwest",
+ "rustls",
  "rusty_v8",
  "serde",
  "serde_json",
