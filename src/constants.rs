@@ -14,6 +14,8 @@ pub static DOWN_REPORT_CHANNEL_ID: LazyLock<ChannelId> =
     LazyLock::new(|| ChannelId::from(1162391031321468948));
 pub static HTQ_CHANNEL_ID: LazyLock<ChannelId> =
     LazyLock::new(|| ChannelId::from(1101830185743028224));
+pub static TRAP_CHANNEL_ID: LazyLock<ChannelId> =
+    LazyLock::new(|| ChannelId::from(1493133944592269423));
 pub static MOD_CHANNEL_ID: LazyLock<ChannelId> =
     LazyLock::new(|| ChannelId::from(1185539468975943740));
 pub static MEMBER_LOG_CHANNEL_ID: LazyLock<ChannelId> =
