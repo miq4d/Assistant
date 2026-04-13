@@ -11,7 +11,7 @@ use serenity::{
 use tokio::time::sleep;
 
 use crate::{
-    constants::{HTQ_CHANNEL_ID, MENTION_REGEX, MOD_CHANNEL_ID, TRAP_CHANNEL_ID},
+    constants::{GUILD_ID, HTQ_CHANNEL_ID, MENTION_REGEX, MOD_CHANNEL_ID, TRAP_CHANNEL_ID},
     data::SharedData,
 };
 
@@ -80,6 +80,25 @@ async fn handle_trap_message(ctx: &Context, message: &Message) {
         return;
     };
 
+    let dm_builder = CreateMessage::new()
+        .allowed_mentions(
+            CreateAllowedMentions::new()
+                .all_users(false)
+                .all_roles(false)
+                .everyone(false)
+                .replied_user(false),
+        )
+        .content(format!(
+            "You are banned from the server because you posted something to honeypot channel. If this is a mistake, or the account compromise has been resolved, please submit an appeal at https://appeals.wickbot.com/ using server ID {}.",
+            GUILD_ID.get()
+        ));
+    let dm_sent = message
+        .author
+        .id
+        .direct_message(&ctx.http, dm_builder)
+        .await
+        .is_ok();
+
     let mut forward = MessageReference::new(MessageReferenceKind::Forward, message.channel_id)
         .message_id(message.id);
     forward = forward.guild_id(guild_id);
@@ -123,6 +142,35 @@ async fn handle_trap_message(ctx: &Context, message: &Message) {
             message_id = message.id.get(),
             ?error,
             "failed to ban trap message author"
+        );
+        return;
+    }
+
+    let banned_user_info = CreateMessage::new()
+        .allowed_mentions(
+            CreateAllowedMentions::new()
+                .all_users(false)
+                .all_roles(false)
+                .everyone(false)
+                .replied_user(false),
+        )
+        .content(format!(
+            "Banned user: {}\nUser ID: {}\nDM sent: {}",
+            message.author.name,
+            message.author.id.get(),
+            if dm_sent { "yes" } else { "no" }
+        ));
+
+    if let Err(error) = MOD_CHANNEL_ID
+        .widen()
+        .send_message(&ctx.http, banned_user_info)
+        .await
+    {
+        tracing::error!(
+            user_id = message.author.id.get(),
+            message_id = message.id.get(),
+            ?error,
+            "failed to post banned user info"
         );
         return;
     }
