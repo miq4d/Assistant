@@ -98,6 +98,24 @@ async fn handle_trap_message(ctx: &Context, message: &Message) {
         .direct_message(&ctx.http, dm_builder)
         .await
         .is_ok();
+    let roles_summary = message
+        .member(ctx)
+        .await
+        .ok()
+        .and_then(|member| member.roles(&ctx.cache))
+        .map(|mut roles| {
+            roles.sort_by(|a, b| a.name.cmp(&b.name));
+            if roles.is_empty() {
+                "none".to_string()
+            } else {
+                roles
+                    .into_iter()
+                    .map(|role| format!("- <@&{}>", role.id.get()))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            }
+        })
+        .unwrap_or_else(|| "unavailable".to_string());
 
     let mut forward = MessageReference::new(MessageReferenceKind::Forward, message.channel_id)
         .message_id(message.id);
@@ -155,10 +173,11 @@ async fn handle_trap_message(ctx: &Context, message: &Message) {
                 .replied_user(false),
         )
         .content(format!(
-            "Banned user: {}\nUser ID: {}\nDM sent: {}",
+            "Banned user: {}\nUser ID: {}\nDM sent: {}\nRoles:\n{}",
             message.author.name,
             message.author.id.get(),
-            if dm_sent { "yes" } else { "no" }
+            if dm_sent { "yes" } else { "no" },
+            roles_summary
         ));
 
     if let Err(error) = MOD_CHANNEL_ID
